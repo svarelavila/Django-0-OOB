@@ -2,7 +2,8 @@
 # coding: utf-8
 
 import traceback
-from elem02 import Elem, Text
+from elem2 import Elem, Text
+
 
 def test_text():
     # What is Text?

@@ -2,13 +2,12 @@ class Text(str):
     """
     Clase para manejar texto dentro de elementos HTML.
     """
-
     def __str__(self):
         text = super().__str__()
         text = text.replace('&', '&amp;')
         text = text.replace('<', '&lt;')
         text = text.replace('>', '&gt;')
-        #text = text.replace('"', '&quot;')
+        text = text.replace('"', '&quot;')
         text = text.replace('\n', '\n<br />\n')
         return text
 
@@ -22,17 +21,16 @@ class Elem:
         """
         Excepción personalizada para errores de validación en Elem.
         """
-        def __init__(self, message="Contenido inválido."):
-            super().__init__(message)
+        pass
 
-    def __init__(self, tag='div', attr=None, content=None, tag_type='double'):
+    def __init__(self, tag="div", attr=None, content=None, tag_type="double"):
         if attr is None:
             attr = {}
         self.tag = tag
         self.attr = attr
         self.tag_type = tag_type
 
-        if tag_type not in ['double', 'simple']:
+        if tag_type not in ["double", "simple"]:
             raise Elem.ValidationError("Tipo de etiqueta inválido.")
 
         self.content = []
@@ -40,15 +38,15 @@ class Elem:
             self.add_content(content)
 
     def __str__(self):
-        if self.tag_type == 'double':
+        if self.tag_type == "double":
             if not self.content:
                 return f"<{self.tag}{self.__make_attr()}></{self.tag}>"
             return f"<{self.tag}{self.__make_attr()}>\n{self.__make_content()}\n</{self.tag}>"
-        elif self.tag_type == 'simple':
+        elif self.tag_type == "simple":
             return f"<{self.tag}{self.__make_attr()} />"
 
     def __make_attr(self):
-        result = ''
+        result = ""
         for key, value in sorted(self.attr.items()):
             result += f' {key}="{value}"'
         return result
@@ -58,16 +56,19 @@ class Elem:
         Genera el contenido del elemento, incluyendo elementos anidados con la indentación correcta.
         """
         if not self.content:
-            return ''
+            return ""
         result = []
         for elem in self.content:
             elem_str = str(elem).strip()  # Convertimos el contenido a string y quitamos espacios
             if elem_str:  # Solo incluimos contenido no vacío
-                # Añadimos indentación para cada nivel
-                result.append("  " + elem_str.replace("\n", "\n  "))
-        return '\n'.join(result)
+                # Aquí corregimos el uso de &quot; reemplazándolo con "
+                result.append("  " + elem_str.replace("\n", "\n  ").replace("&quot;", '"'))
+        return "\n".join(result)
 
     def add_content(self, content):
+        """
+        Agrega contenido al elemento.
+        """
         if not Elem.check_type(content):
             raise Elem.ValidationError("Contenido inválido.")
         if isinstance(content, list):
@@ -84,6 +85,9 @@ class Elem:
 
     @staticmethod
     def check_type(content):
+        """
+        Valida que el contenido sea de tipo Elem, Text, o una lista válida de ambos.
+        """
         return isinstance(content, (Elem, Text)) or (
             isinstance(content, list) and all(isinstance(item, (Elem, Text)) for item in content)
         )
@@ -91,15 +95,18 @@ class Elem:
 
 # Prueba para generar HTML
 def generate_html():
-    html = Elem('html', content=[
-        Elem('head', content=Elem('title', content=Text('"Hello ground!"'))),
-        Elem('body', content=[
-            Elem('h1', content=Text('"Oh no, not again!"')),
-            Elem('img', attr={'src': 'http://i.imgur.com/pfp3T.jpg'}, tag_type='simple')
+    html = Elem("html", content=[
+        Elem("head", content=[
+            Elem("title", content=Text('"Hello ground!"')),
+            Elem("meta", attr={"charset": "UTF-8"}, tag_type="simple")
+        ]),
+        Elem("body", content=[
+            Elem("h1", content=Text('"Oh no, not again!"')),
+            Elem("img", attr={"src": "http://i.imgur.com/pfp3T.jpg"}, tag_type="simple")
         ])
     ])
     print(html)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     generate_html()

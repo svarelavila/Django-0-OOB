@@ -1,60 +1,74 @@
 import sys
 import os
-import re
+import settings
+
+
+def render(template):
+    """
+    Procesa el archivo .template y genera un archivo .html.
+    :param template: Nombre del archivo .template a procesar.
+    """
+    try:
+        # Leer el contenido del archivo .template
+        with open(template, 'r') as f:
+            content = f.read()
+
+        # Reemplazar los patrones {key} con los valores de settings.py
+        for key, value in vars(settings).items():
+            if not key.startswith("__"):  # Ignorar variables internas
+                content = content.replace(f'{{{key}}}', str(value))
+
+        # Escribir el contenido procesado en el archivo .html
+        output_file = template.replace('.template', '.html')
+        with open(output_file, 'w') as output:
+            output.write(content)
+        print(f"Archivo procesado correctamente: {output_file}")
+    except Exception as e:
+        print(f"Error al procesar la plantilla: {e}")
+
+
+def valid_file(file):
+    """
+    Verifica si el archivo existe y tiene la extensión correcta.
+    :param file: Nombre del archivo a validar.
+    :return: True si es válido, False si no lo es.
+    """
+    if not file.endswith('.template'):
+        print(f"Error: {file} no tiene la extensión .template")
+        return False
+    if not os.path.isfile(file):
+        print(f"Error: El archivo {file} no existe")
+        return False
+    return True
+
+
+def valid_imput():
+    """
+    Valida los argumentos de entrada.
+    :return: True si los argumentos son válidos, False si no lo son.
+    """
+    if len(sys.argv) != 2:
+        print("Error: Número inválido de argumentos.")
+        print("Uso: python render.py <archivo>.template")
+        return False
+
+    file = sys.argv[1]
+    return valid_file(file)
 
 
 def main():
-    # Validar número correcto de argumentos
-    if len(sys.argv) != 2:
-        print("Uso: python3 render.py <archivo.template>")
+    """
+    Punto de entrada del programa.
+    """
+    if not valid_imput():
         sys.exit(1)
 
-    input_file = sys.argv[1]
-
-    # Validar extensión del archivo
-    if not input_file.endswith('.template'):
-        print("Error: La extensión del archivo debe ser .template")
-        sys.exit(1)
-
-    # Validar existencia del archivo
-    if not os.path.isfile(input_file):
-        print(f"Error: El archivo '{input_file}' no existe.")
-        sys.exit(1)
-
-    # Importar configuraciones desde settings.py
     try:
-        import settings
-    except ImportError:
-        print("Error: No se encontró el archivo settings.py.")
-        sys.exit(1)
-
-    # Leer el contenido del archivo .template
-    try:
-        with open(input_file, 'r') as file:
-            template_content = file.read()
+        render(sys.argv[1])
     except Exception as e:
-        print(f"Error al leer el archivo '{input_file}': {e}")
+        print(f"Error inesperado: {e}")
         sys.exit(1)
 
-    # Sustituir patrones con los valores de settings.py
-    try:
-        for key, value in settings.__dict__.items():
-            if not key.startswith("__"):
-                pattern = r"\{\{" + key + r"\}\}"
-                template_content = re.sub(pattern, str(value), template_content)
-    except Exception as e:
-        print(f"Error al procesar el archivo: {e}")
-        sys.exit(1)
 
-    # Generar el archivo de salida con extensión .html
-    output_file = input_file.replace('.template', '.html')
-    try:
-        with open(output_file, 'w') as file:
-            file.write(template_content)
-        print(f"Archivo procesado correctamente: {output_file}")
-    except Exception as e:
-        print(f"Error al escribir el archivo '{output_file}': {e}")
-        sys.exit(1)
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

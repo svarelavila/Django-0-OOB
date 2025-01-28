@@ -1,6 +1,3 @@
-#!/usr/bin/python3
-
-
 class Text(str):
     """Converts a text string into HTML by replacing each character with its HTML equivalent"""
     def __str__(self):
@@ -11,7 +8,6 @@ class Text(str):
         text = text.replace('"', '&quot;')
         text = text.replace('\n', '\n<br />\n')
         return text
-        #return super().__str__().replace('<', '&lt;').replace('>', '&gt;').replace('\n', '\n<br />\n').replace('"', '&quot;')
 
 class Elem:
     """
@@ -97,14 +93,18 @@ class Elem:
                                                 isinstance(elem, Elem)
                                                 for elem in content])))
 
-def test():
+
+# Prueba para generar el HTML solicitado
+def generate_html():
     html = Elem('html', content=[
-                Elem('head', content=Elem(
-                    'title', content=Text('"Hello ground!"'))),
-                Elem('body', content=[Elem('h1', content=Text('"Oh no, not again!"')),
-                                      Elem('img', {'src': 'http://i.imgur.com/pfp3T.jpg'}, tag_type='simple')])])
+        Elem('head', content=Elem('title', content=Text('"Hello ground!"'))),
+        Elem('body', content=[
+            Elem('h1', content=Text('"Oh no, not again!"')),
+            Elem('img', attr={'src': 'http://i.imgur.com/pfp3T.jpg'}, tag_type='simple')
+        ])
+    ])
     print(html)
 
 
 if __name__ == '__main__':
-    test()
+    generate_html()

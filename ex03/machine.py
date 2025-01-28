@@ -1,72 +1,92 @@
 import random
-from beverages import Coffee, Tea, Chocolate, Cappuccino  # Importa las clases de bebidas
+from beverages import HotBeverage, Coffee, Tea, Chocolate, Cappuccino
+
 
 class CoffeeMachine:
     """
-    Representa una máquina de café que puede servir bebidas calientes.
+    Clase que representa una máquina de café.
     """
+
+    class EmptyCup(HotBeverage):
+        """
+        Clase que representa una taza vacía.
+        """
+
+        def __init__(self):
+            super().__init__(name="empty cup", price=0.90)
+
+        def description(self):
+            """
+            Devuelve la descripción de la taza vacía.
+            """
+            return "An empty cup?! Gimme my money back!"
 
     class BrokenMachineException(Exception):
         """
-        Excepción personalizada para indicar que la máquina está rota.
+        Excepción que se lanza cuando la máquina está rota.
         """
-        def __init__(self, message="This coffee machine is broken."):
-            super().__init__(message)
+
+        def __init__(self):
+            super().__init__("This coffee machine has to be repaired.")
 
     def __init__(self):
         """
-        Constructor de la máquina de café.
+        Constructor que inicializa el estado de la máquina.
         """
-        self.operation_count = 0
-        self.operation_limit = 10  # Número máximo de operaciones antes de romperse
+        self.served_count = 0  # Contador de bebidas servidas
+        self.is_broken = False  # Estado de la máquina
 
-    def serve(self, beverage_class):
+    def serve(self, beverage_cls):
         """
-        Sirve una bebida utilizando la clase de bebida especificada.
-        
-        :param beverage_class: Clase de bebida caliente que se quiere servir.
-        :return: Instancia de la bebida si tiene éxito.
-        :raises: BrokenMachineException si la máquina está rota o no puede servir.
+        Sirve una bebida aleatoriamente o una taza vacía.
+
+        :param beverage_cls: Clase de bebida derivada de HotBeverage.
+        :return: Instancia de la bebida o de EmptyCup.
+        :raises: BrokenMachineException si la máquina está rota.
         """
-        if self.operation_count >= self.operation_limit:
+        if self.is_broken:
             raise CoffeeMachine.BrokenMachineException()
 
-        self.operation_count += 1
+        # Incrementar el contador de bebidas servidas
+        self.served_count += 1
 
-        # 50% de probabilidad de servir la bebida correctamente
-        if random.choice([True, False]):
-            return beverage_class()
-        else:
-            raise CoffeeMachine.BrokenMachineException("The machine failed to serve the beverage.")
+        # Verificar si la máquina se rompe después de 10 bebidas
+        if self.served_count > 10:
+            self.is_broken = True
+            raise CoffeeMachine.BrokenMachineException()
+
+        # Aleatoriedad: usar random.randint(0, 1) para decidir entre bebida o taza vacía
+        if random.randint(0, 1) == 0:  # 50% de probabilidad
+            return CoffeeMachine.EmptyCup()
+
+        return beverage_cls()  # Devuelve la bebida solicitada
 
     def repair(self):
         """
-        Repara la máquina y restablece el contador de operaciones.
+        Repara la máquina para que vuelva a servir bebidas.
         """
-        self.operation_count = 0
-        print("The coffee machine has been repaired!")
+        self.is_broken = False
+        self.served_count = 0  # Reinicia el contador
+        print("The coffee machine has been repaired.")
 
 
-# Pruebas
-if __name__ == "__main__":
-    machine = CoffeeMachine()
+def test():
+    """
+    Pruebas para la clase CoffeeMachine utilizando random.randint().
+    """
+    coffeeMachine = CoffeeMachine()
+    beverages = [Coffee, Tea, Cappuccino, Chocolate, HotBeverage]
 
-    # Intentar servir bebidas hasta que la máquina se rompa
-    beverages = [Coffee, Tea, Chocolate, Cappuccino]
-    for i in range(12):  # Intentar más de 10 operaciones
+    for _ in range(24):  # Intentar servir hasta 24 bebidas
         try:
-            beverage = machine.serve(random.choice(beverages))
-            print(f"Served: {beverage}")
+            # Seleccionar aleatoriamente una bebida con random.randint()
+            random_index = random.randint(0, len(beverages) - 1)
+            print(coffeeMachine.serve(beverages[random_index]))
         except CoffeeMachine.BrokenMachineException as e:
+            # Manejar la excepción cuando la máquina se rompe
             print(e)
+            coffeeMachine.repair()
 
-    # Reparar la máquina
-    machine.repair()
 
-    # Intentar nuevamente
-    for i in range(5):
-        try:
-            beverage = machine.serve(random.choice(beverages))
-            print(f"Served: {beverage}")
-        except CoffeeMachine.BrokenMachineException as e:
-            print(e)
+if __name__ == '__main__':
+    test()

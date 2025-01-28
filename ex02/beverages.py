@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 class HotBeverage:
     """
     Clase base para bebidas calientes.
@@ -8,10 +6,12 @@ class HotBeverage:
     def __init__(self, name="hot beverage", price=0.30):
         """
         Constructor de la clase HotBeverage.
-        
+
         :param name: (str) Nombre de la bebida.
         :param price: (float) Precio de la bebida.
         """
+        if price < 0:
+            raise ValueError("El precio no puede ser negativo.")  # Validación del precio
         self.name = name
         self.price = price
 
@@ -40,6 +40,9 @@ class Coffee(HotBeverage):
         super().__init__(name="coffee", price=0.40)
 
     def description(self):
+        """
+        Devuelve una descripción específica para el café.
+        """
         return "A coffee, to stay awake."
 
 
@@ -61,6 +64,9 @@ class Chocolate(HotBeverage):
         super().__init__(name="chocolate", price=0.50)
 
     def description(self):
+        """
+        Devuelve una descripción específica para el chocolate.
+        """
         return "Chocolate, sweet chocolate..."
 
 
@@ -73,26 +79,30 @@ class Cappuccino(HotBeverage):
         super().__init__(name="cappuccino", price=0.45)
 
     def description(self):
+        """
+        Devuelve una descripción específica para el cappuccino.
+        """
         return "Un po' di Italia nella sua tazza!"
 
 
 def test():
     """
-    Función de prueba para demostrar el comportamiento de las clases.
+    Pruebas para demostrar el comportamiento de las clases de bebidas.
     """
+    # Crear una lista con instancias de las bebidas
     beverages = [
-        HotBeverage(),
-        Coffee(),
-        Tea(),
-        Chocolate(),
-        Cappuccino()
+        HotBeverage(),  # Bebida genérica
+        Coffee(),       # Café
+        Tea(),          # Té
+        Chocolate(),    # Chocolate caliente
+        Cappuccino()    # Cappuccino
     ]
 
+    # Imprimir los detalles de cada bebida
     for beverage in beverages:
         print(beverage)
-        print()
+        print()  # Línea en blanco para separar las salidas
 
 
 if __name__ == '__main__':
     test()
-
