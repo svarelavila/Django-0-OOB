@@ -1,52 +1,52 @@
 class Intern:
     """
-    Representa a un interno en una empresa.
+    Represents an intern in a company.
     """
 
     class Coffee:
         """
-        Representa una taza de café preparado por el interno.
+        Represents a cup of coffee prepared by the intern.
         """
 
         def __str__(self):
             """
-            Devuelve una descripción del café.
+            Returns a description of the coffee.
             """
             return "This is the worst coffee you ever tasted."
 
     def __init__(self, name="My name? I'm nobody, an intern, I have no name."):
         """
-        Constructor de la clase Intern.
-        
-        :param name: (str) Nombre del interno. Valor predeterminado si no se proporciona.
+        Constructor for the Intern class.
+        :param name: (str) Intern's name. Default value
+        if not provided.
         """
         self.name = name
 
     def __str__(self):
         """
-        Devuelve el nombre del interno.
+        Returns the intern's name.
         """
         return self.name
 
     def work(self):
         """
-        Simula una acción de trabajo que el interno no puede realizar.
-        Lanza una excepción indicando que no puede trabajar.
+        Simulates a work action that the intern cannot perform.
+        Raises an exception indicating that the intern cannot work.
         """
         raise Exception("I'm just an intern, I can't do that...")
 
     def make_coffee(self):
         """
-        Simula la preparación de café por el interno.
-
-        :return: (Coffee) Una instancia de la clase Coffee.
+        Simulates the intern preparing coffee.
+        :return: (Coffee) An instance of the Coffee class.
         """
         return Intern.Coffee()
 
 
 def test():
     """
-    Pruebas para demostrar el comportamiento de la clase Intern y su clase anidada Coffee.
+    Tests to demonstrate the behavior of the
+    Intern class and its nested Coffee class.
     """
     # Crear un interno sin nombre
     intern_no_name = Intern()

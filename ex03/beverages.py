@@ -1,39 +1,43 @@
 class HotBeverage:
     """
-    Clase base para bebidas calientes.
+    Base class for hot beverages.
     """
 
     def __init__(self, name="hot beverage", price=0.30):
         """
-        Constructor de la clase HotBeverage.
-
-        :param name: (str) Nombre de la bebida.
-        :param price: (float) Precio de la bebida.
+        Constructor for the HotBeverage class.
+        :param name: (str) Name of the beverage.
+        :param price: (float) Price of the beverage.
         """
         if price < 0:
-            raise ValueError("El precio no puede ser negativo.")  # Validación del precio
+            # Validación del precio
+            raise ValueError("The price cannot be negative.")
         self.name = name
         self.price = price
 
     def description(self):
         """
-        Devuelve una descripción genérica de la bebida.
+        Returns a generic description of the beverage.
         """
         return "Just some hot water in a cup."
 
     def __str__(self):
         """
-        Devuelve una representación textual de la bebida.
+        Returns a textual representation of the beverage.
         """
-        TEMPLATE = ("Name : {name}\n"
-                    "Price: {price:0.2f}\n"
-                    "Description: {description}\n")
-        return TEMPLATE.format(name=self.name, price=self.price, description=self.description())
+        TEMPLATE = ("name : {name}\n"
+                    "price: {price:0.2f}\n"
+                    "description: {description}")
+        return TEMPLATE.format(
+            name=self.name,
+            price=self.price,
+            description=self.description()
+        )
 
 
 class Coffee(HotBeverage):
     """
-    Clase que representa un café.
+    Class representing coffee.
     """
 
     def __init__(self):
@@ -41,14 +45,14 @@ class Coffee(HotBeverage):
 
     def description(self):
         """
-        Devuelve una descripción específica para el café.
+        Returns a specific description for coffee.
         """
         return "A coffee, to stay awake."
 
 
 class Tea(HotBeverage):
     """
-    Clase que representa un té.
+    Class representing tea.
     """
 
     def __init__(self):
@@ -57,7 +61,7 @@ class Tea(HotBeverage):
 
 class Chocolate(HotBeverage):
     """
-    Clase que representa un chocolate caliente.
+    Class representing hot chocolate.
     """
 
     def __init__(self):
@@ -65,14 +69,14 @@ class Chocolate(HotBeverage):
 
     def description(self):
         """
-        Devuelve una descripción específica para el chocolate.
+        Returns a specific description for hot chocolate.
         """
         return "Chocolate, sweet chocolate..."
 
 
 class Cappuccino(HotBeverage):
     """
-    Clase que representa un cappuccino.
+    Class representing cappuccino.
     """
 
     def __init__(self):
@@ -80,14 +84,14 @@ class Cappuccino(HotBeverage):
 
     def description(self):
         """
-        Devuelve una descripción específica para el cappuccino.
+        Returns a specific description for cappuccino.
         """
         return "Un po' di Italia nella sua tazza!"
 
 
 def test():
     """
-    Pruebas para demostrar el comportamiento de las clases de bebidas.
+    Tests to demonstrate the behavior of the beverage classes.
     """
     # Crear una lista con instancias de las bebidas
     beverages = [
@@ -101,7 +105,7 @@ def test():
     # Imprimir los detalles de cada bebida
     for beverage in beverages:
         print(beverage)
-        print()  # Línea en blanco para separar las salidas
+        print()
 
 
 if __name__ == '__main__':

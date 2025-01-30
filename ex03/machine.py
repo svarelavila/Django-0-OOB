@@ -55,7 +55,7 @@ class CoffeeMachine:
             self.is_broken = True
             raise CoffeeMachine.BrokenMachineException()
 
-        # Aleatoriedad: usar random.randint(0, 1) para decidir entre bebida o taza vacía
+        # Usar random.randint(0, 1) para decidir entre bebida o taza vacía
         if random.randint(0, 1) == 0:  # 50% de probabilidad
             return CoffeeMachine.EmptyCup()
 

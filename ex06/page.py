@@ -254,24 +254,24 @@ def test():
         print("===================")
 
 
-def main():
-    """
-    Ejecuta las pruebas exhaustivas y muestra resultados adicionales.
-    """
-    test()
+# def main():
+#     """
+#     Ejecuta las pruebas exhaustivas y muestra resultados adicionales.
+#     """
+#     test()
 
-    # Página de ejemplo válida
-    page = Page(Html([
-        Head([Title(Text('"Hello ground!"'))]),
-        Body([
-            H1(Text('"Oh no, not again!"')),
-            Img({'src': 'http://i.imgur.com/pfp3T.jpg'})
-        ])
-    ]))
-    print(page)
-    print("Is valid:", page.is_valid())
-    page.write_to_file("output_valid.html")
+#     # Página de ejemplo válida
+#     page = Page(Html([
+#         Head([Title(Text('"Hello ground!"'))]),
+#         Body([
+#             H1(Text('"Oh no, not again!"')),
+#             Img({'src': 'http://i.imgur.com/pfp3T.jpg'})
+#         ])
+#     ]))
+#     print(page)
+#     print("Is valid:", page.is_valid())
+#     page.write_to_file("output_valid.html")
 
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()
