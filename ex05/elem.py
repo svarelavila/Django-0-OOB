@@ -135,40 +135,7 @@ def generate_html():
         ])
     ])
     print(html)
-    print("**************************************************")
     
-    html_basic = Elem("html", content=[
-    Elem("head", content=[
-        Elem("title", content=Text("Basic HTML Test"))
-        ]),
-    Elem("body", content=[
-        Elem("h1", content=Text("Welcome!")),
-        Elem("p", content=Text("This is a simple HTML test page."))
-        ])
-    ])
-    print(html_basic)
-    print("*****************************************")
-
-    html_with_list_table = Elem("html", content=[
-    Elem("head", content=[
-        Elem("title", content=Text("List & Table Test"))
-        ]),
-    Elem("body", content=[
-        Elem("h2", content=Text("Items List")),
-        Elem("ol", content=[
-            Elem("li", content=Text("Item 1")),
-            Elem("li", content=Text("Item 2")),
-            Elem("li", content=Text("Item 3"))
-            ]),
-        Elem("h2", content=Text("Sample Table")),
-        Elem("table", content=[
-            Elem("tr", content=[Elem("th", content=Text("Name")), Elem("th", content=Text("Age"))]),
-            Elem("tr", content=[Elem("td", content=Text("Alice")), Elem("td", content=Text("25"))]),
-            Elem("tr", content=[Elem("td", content=Text("Bob")), Elem("td", content=Text("30"))])
-            ])
-        ])
-    ])
-    print(html_with_list_table)
 
 if __name__ == "__main__":
     generate_html()

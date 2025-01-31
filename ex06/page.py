@@ -4,14 +4,13 @@ from elements import Html, Head, Body, Title, Meta, Img, Table, Th, Tr, Td, Ul, 
 
 class Page:
     """
-    Clase que representa un documento HTML con validación de estructura.
+    Class representing an HTML document with structure validation.
     """
 
     def __init__(self, root: Elem):
         """
-        Constructor que toma como raíz un elemento HTML.
-        
-        :param root: Instancia de Elem que representa el elemento raíz.
+        Constructor that takes an HTML element as the root.
+        :param root: Instance of Elem representing the root element.
         """
         if not isinstance(root, Elem):
             raise TypeError("Root must be an instance of Elem.")
@@ -19,7 +18,7 @@ class Page:
 
     def is_valid(self) -> bool:
         """
-        Valida si la estructura del árbol HTML cumple con las reglas definidas.
+        Validates whether the HTML tree structure follows the defined rules.
         """
         if not isinstance(self.root, Html):
             return False  # El elemento raíz debe ser <html>
@@ -27,7 +26,7 @@ class Page:
 
     def _validate_tree(self, elem: Elem) -> bool:
         """
-        Valida recursivamente el árbol HTML a partir de un elemento.
+        Recursively validates the HTML tree starting from an element.
         """
         rules = {
             "html": lambda e: self._check_children(e, [Head, Body], exact=True),
@@ -48,6 +47,8 @@ class Page:
             "ol": lambda e: self._check_children(e, [Li], exact=False, minimum=1),
             "tr": lambda e: self._check_children(e, [Th, Td], exact=False, exclusive=True),
             "table": lambda e: self._check_children(e, [Tr], exact=False),
+            "hr": lambda e: len(e.content) == 0,
+            "br": lambda e: len(e.content) == 0,
         }
         if isinstance(elem, Meta):
             return len(elem.content) == 0  # Validar que <meta> no tenga contenido
@@ -61,6 +62,16 @@ class Page:
         return True
 
     def _check_children(self, elem, allowed, exact=False, exclusive=False, minimum=0):
+        """
+        Validates the children of an HTML element based on predefined rules.
+
+        :param elem: The element whose children need validation.
+        :param allowed: A list of allowed child element types.
+        :param exact: If True, the element must contain only the allowed types.
+        :param exclusive: If True, all children must be of the same type.
+        :param minimum: The minimum number of children required.
+        :return: True if the element's children comply with the rules, False otherwise.
+        """
         if len(elem.content) < minimum:
             return False
         if exclusive:
@@ -76,7 +87,7 @@ class Page:
 
     def __str__(self) -> str:
         """
-        Devuelve el HTML como una cadena, incluyendo <!DOCTYPE html> si es necesario.
+        Returns the HTML as a string, including <!DOCTYPE html> if necessary.
         """
         if isinstance(self.root, Html):
             return f"<!DOCTYPE html>\n{self.root}"
@@ -84,9 +95,8 @@ class Page:
 
     def write_to_file(self, filename: str):
         """
-        Escribe el HTML en un archivo.
-        
-        :param filename: Nombre del archivo.
+        Writes the HTML to a file.
+        :param filename: Name of the file.
         """
         with open(filename, "w") as file:
             file.write(str(self))
@@ -95,7 +105,8 @@ class Page:
 # Pruebas exhaustivas
 def test():
     """
-    Realiza una serie de pruebas exhaustivas para validar la funcionalidad de la clase Page y sus reglas de validación.
+    Performs a series of exhaustive tests to validate
+    the functionality of the Page class and its validation rules.
     """
 
     # Caso 1: Página válida con estructura básica
@@ -253,25 +264,20 @@ def test():
         print(page)
         print("===================")
 
-
-# def main():
-#     """
-#     Ejecuta las pruebas exhaustivas y muestra resultados adicionales.
-#     """
-#     test()
-
-#     # Página de ejemplo válida
-#     page = Page(Html([
-#         Head([Title(Text('"Hello ground!"'))]),
-#         Body([
-#             H1(Text('"Oh no, not again!"')),
-#             Img({'src': 'http://i.imgur.com/pfp3T.jpg'})
-#         ])
-#     ]))
-#     print(page)
-#     print("Is valid:", page.is_valid())
-#     page.write_to_file("output_valid.html")
+    # Página de ejemplo válida
+    page = Page(Html([
+        Head([Title(Text('"Hello ground!"'))]),
+        Body([
+            H1(Text('"Oh no, not again!"')),
+            Hr(),
+            Img({'src': 'http://i.imgur.com/pfp3T.jpg'}),
+            Br(),
+        ])
+    ]))
+    if not page.is_valid():
+        print('\nValid page (example)')
+        print(page)
 
 
-# if __name__ == '__main__':
-#     main()
+if __name__ == '__main__':
+    test()
