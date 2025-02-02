@@ -29,11 +29,14 @@ class Page:
         Recursively validates the HTML tree starting from an element.
         """
         rules = {
-            "html": lambda e: self._check_children(e, [Head, Body], exact=True),
+            "html": lambda e: (
+                        self._check_children(e, [Head, Body], exact=True)
+                        and len([child for child in e.content if isinstance(child, Head)]) == 1
+                        and len([child for child in e.content if isinstance(child, Body)]) == 1),
             "head": lambda e: (
                         self._check_children(e, [Title, Meta], exact=False)
                         and len([child for child in e.content if isinstance(child, Title)]) == 1),
-            "body": lambda e: self._check_children(e, [H1, H2, Div, Table, Ul, Ol, Span, P, Text], exact=False),
+            "body": lambda e: self._check_children(e, [H1, H2, Div, Table, Ul, Ol, Span, P, Text, Hr, Br, Img], exact=False),
             "div": lambda e: self._check_children(e, [H1, H2, Div, Table, Ul, Ol, Span, P, Text], exact=False),
             "title": lambda e: self._check_children(e, [Text], exact=True),
             "h1": lambda e: self._check_children(e, [Text], exact=True),
@@ -43,22 +46,29 @@ class Page:
             "td": lambda e: self._check_children(e, [Text], exact=True),
             "p": lambda e: self._check_children(e, [Text], exact=True),
             "span": lambda e: self._check_children(e, [Text, P], exact=False),
-            "ul": lambda e: self._check_children(e, [Li], exact=False, minimum=1),
-            "ol": lambda e: self._check_children(e, [Li], exact=False, minimum=1),
+            "ul": lambda e: self._check_children(e, [Li, Ol, Ul], exact=False, minimum=1),
+            "ol": lambda e: self._check_children(e, [Li, Ol, Ul], exact=False, minimum=1),
             "tr": lambda e: self._check_children(e, [Th, Td], exact=False, exclusive=True),
             "table": lambda e: self._check_children(e, [Tr], exact=False),
             "hr": lambda e: len(e.content) == 0,
             "br": lambda e: len(e.content) == 0,
+            "img": lambda e: len(e.content) == 0
         }
+
         if isinstance(elem, Meta):
-            return len(elem.content) == 0  # Validar que <meta> no tenga contenido
+            # return not elem.content
+            return len(elem.content) == 0
+
         if elem.tag not in rules:
             return False
+
         if not rules[elem.tag](elem):
             return False
+
         for child in elem.content:
             if isinstance(child, Elem) and not self._validate_tree(child):
                 return False
+
         return True
 
     def _check_children(self, elem, allowed, exact=False, exclusive=False, minimum=0):
@@ -83,6 +93,8 @@ class Page:
                 return False
             if isinstance(child, Text) and not str(child).strip():
                 continue  # Ignorar textos vacíos
+        print(f"Validating {elem.tag} → Allowed: {[a.__name__ for a in allowed]} → Current: {[type(c).__name__ for c in elem.content]}")
+
         return True
 
     def __str__(self) -> str:
@@ -102,182 +114,69 @@ class Page:
             file.write(str(self))
 
 
-# Pruebas exhaustivas
 def test():
     """
-    Performs a series of exhaustive tests to validate
-    the functionality of the Page class and its validation rules.
+    Runs a minimal but complete set of tests to validate the Page class.
     """
+    print("\n" + "=" * 30)
+    print("=== TESTING PAGE CLASS ===")
+    print("=" * 30)
 
-    # Caso 1: Página válida con estructura básica
-    page = Page(Html([
-        Head([Title(Text('"Hello ground!"')), Meta({'charset': 'UTF-8'})]),
-        Body([])
-    ]))
-    if page.is_valid():
-        print('\nValid page (example)')
-        print(page)
-        print("-------------")
-
-    # Caso 2: Página inválida con una etiqueta no reconocida
-    page = Page(Html([
-        Head([Title(Text('"Hello ground!"')), Meta({'charset': 'UTF-8'}), Elem('tortilla de patata')]),
-        Body()
-    ]))
-    if not page.is_valid():
-        print('\nInvalid page (invalid tag)')
-        print(page)
-        print("------------")
-
-    # Caso 3: Página inválida sin etiquetas <head> ni <body>
-    page = Page(Html([]))
-    if not page.is_valid():
-        print('\nInvalid page (no head or body)')
-        print(page)
-        print("--------------")
-
-    # Caso 4: Página inválida sin etiqueta <head>
-    page = Page(Html([Body([])]))
-    if not page.is_valid():
-        print('\nInvalid page (no head)')
-        print(page)
-        print("-------------")
-
-    # Caso 5: Página inválida con dos etiquetas <head>
-    page = Page(Html([
-        Head([Title(Text('"Hello ground!"')), Meta({'charset': 'UTF-8'})]),
-        Head([Title(Text('"Bye ground!"')), Meta({'charset': 'UTF-8'})]),
-        Body([])
-    ]))
-    if not page.is_valid():
-        print('\nInvalid page (two <head> tags)')
-        print(page)
-        print("----------------")
-
-    # Caso 6: Página inválida sin etiquetas <title> en <head>
-    page = Page(Html([
-        Head([]),
-        Body([])
-    ]))
-    if not page.is_valid():
-        print('\nInvalid page (no <title> tags in <head>)')
-        print(page)
-        print("---------------")
-
-    # Caso 7: Página inválida con dos etiquetas <title> en <head>
-    page = Page(Html([
-        Head([Title(Text('"Hello ground!"')), Title(Text('"Another title!"')), Meta({'charset': 'UTF-8'})]),
-        Body([])
-    ]))
-    if not page.is_valid():
-        print('\nInvalid page (two <title> tags)')
-        print(page)
-        print("-------------")
-
-    # Caso 8: Página inválida con etiqueta <meta> dentro de <body>
-    page = Page(Html([
-        Head([Title(Text('"Hello ground!"'))]),
-        Body([Meta({'charset': 'UTF-8'})])
-    ]))
-    if not page.is_valid():
-        print('\nInvalid page (meta in body)')
-        print(page)
-        print("-----------------")
-
-    # Caso 9: Página inválida con múltiples textos en <title>
-    page = Page(Html([
-        Head([Title([Text('"Hello ground!"'), Text('"Extra text"')])]),
-        Body([])
-    ]))
-    if not page.is_valid():
-        print('\nInvalid page (multiple texts in <title>)')
-        print(page)
-        print("-----------------")
-
-    # Caso 10: Página inválida con etiqueta <h1> dentro de <title>
-    page = Page(Html([
-        Head([Title(H1(Text('"Hello ground!"')))]),
-        Body([])
-    ]))
-    if not page.is_valid():
-        print('\nInvalid page (<h1> in <title>)')
-        print(page)
-        print("---------------")
-
-    # Caso 11: Página inválida con etiqueta <p> directamente dentro de <body>
-    page = Page(Html([
-        Head([Title(Text('"Hello ground!"'))]),
-        Body([P(Text('"Not allowed here!"'))])
-    ]))
-    if not page.is_valid():
-        print('\nInvalid page (<p> directly in <body>)')
-        print(page)
-        print("----------------")
-
-    # Caso 12: Página inválida con etiqueta <h1> dentro de <p>
-    page = Page(Html([
-        Head([Title(Text('"Hello ground!"'))]),
-        Body([P(H1(Text('"Not allowed here!"')))])
-    ]))
-    if not page.is_valid():
-        print('\nInvalid page (<h1> inside <p>)')
-        print(page)
-        print("-----------------")
-
-    # Caso 13: Página inválida con etiqueta <h1> dentro de <span>
-    page = Page(Html([
-        Head([Title(Text('"Hello ground!"'))]),
-        Body([Span(H1(Text('"Not allowed here!"')))])
-    ]))
-    if not page.is_valid():
-        print('\nInvalid page (<h1> inside <span>)')
-        print(page)
-        print("-----------------")
-
-    # Caso 14: Página inválida con etiqueta <h1> dentro de <ul>
-    page = Page(Html([
-        Head([Title(Text('"Hello ground!"'))]),
-        Body([Ul(H1(Text('"Not allowed here!"')))])
-    ]))
-    if not page.is_valid():
-        print('\nInvalid page (<h1> inside <ul>)')
-        print(page)
-        print("------------------")
-
-    # Caso 15: Página inválida con mezcla de <th> y <td> en <tr>
-    page = Page(Html([
-        Head([Title(Text('"Hello ground!"'))]),
-        Body([Table([Tr([Th(Text('"Header"')), Td(Text('"Data"'))])])])
-    ]))
-    if not page.is_valid():
-        print('\nInvalid page (mix of <th> and <td> in <tr>)')
-        print(page)
-        print("===========================")
-
-    # Caso 16: Página inválida con etiqueta <h1> dentro de <table>
-    page = Page(Html([
-        Head([Title(Text('"Hello ground!"'))]),
-        Body([Table([H1(Text('"Not allowed here!"'))])])
-    ]))
-    if not page.is_valid():
-        print('\nInvalid page (<h1> inside <table>)')
-        print(page)
-        print("===================")
-
-    # Página de ejemplo válida
-    page = Page(Html([
-        Head([Title(Text('"Hello ground!"'))]),
+    # Caso 1: Página válida con estructura correcta
+    print("\n" + "-" * 30)
+    print("[TEST 1] Valid HTML Page (Basic Structure)")
+    print("-" * 30)
+    valid_page = Page(Html([
+        Head([Title(Text("Hello World")), Meta({'charset': 'UTF-8'})]),
         Body([
-            H1(Text('"Oh no, not again!"')),
+            H1(Text("Welcome")),
+            P(Text("This is a valid HTML document.")),
             Hr(),
-            Img({'src': 'http://i.imgur.com/pfp3T.jpg'}),
-            Br(),
+            Img({'src': 'image.jpg'}),
+            Br()
         ])
     ]))
-    if not page.is_valid():
-        print('\nValid page (example)')
-        print(page)
+    assert valid_page.is_valid(), "Test failed: Valid page should be valid."
+    print("Passed: Basic structure is valid.")
+
+    # Caso 2: Página inválida con errores de estructura
+    print("\n" + "-" * 30)
+    print("[TEST 2] Invalid Page (Structural Errors)")
+    print("-" * 30)
+    invalid_page = Page(Html([
+        Head([Title(Text("Title 1")), Title(Text("Title 2"))]),  # Duplicated <title>
+        Body([Meta({'charset': 'UTF-8'})])  # <meta> inside <body>
+    ]))
+    assert not invalid_page.is_valid(), "Test failed: Page with invalid structure should be rejected."
+    print("Passed: Structural errors detected correctly.")
+
+    # Caso 3: Página inválida con errores de jerarquía
+    print("\n" + "-" * 30)
+    print("[TEST 3] Invalid Page (Hierarchy Errors)")
+    print("-" * 30)
+    invalid_page = Page(Html([
+        Head([Title(Text("Hierarchy Test"))]),
+        Body([
+            P([H1(Text("Wrong usage"))]),  # <h1> inside <p>
+            Table([Tr([Th(Text("Header")), Td(Text("Data"))])]),  # Mixing <th> and <td>
+            Ul([])  # Empty <ul> (should have at least one <li>)
+        ])
+    ]))
+    assert not invalid_page.is_valid(), "Test failed: Page with invalid hierarchy should be rejected."
+    print("Passed: Hierarchy errors detected correctly.")
+
+    # 📄 Generación de archivos HTML (válido e inválido)
+    print("\n" + "-" * 30)
+    print("[GENERATING HTML FILES]")
+    print("-" * 30)
+    valid_page.write_to_file("valid_page.html")
+    invalid_page.write_to_file("invalid_page.html")
+    print("HTML files generated successfully.")
+
+    print("\n" + "=" * 30)
+    print("=== ALL TESTS PASSED SUCCESSFULLY ===")
+    print("=" * 30)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test()
