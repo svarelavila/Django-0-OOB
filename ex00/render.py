@@ -1,73 +1,51 @@
 import sys
 import os
-import settings
+import settings  # Importamos las variables del archivo settings.py
 
 
 def render(template):
-    """
-    Procesa el archivo .template y genera un archivo .html.
-    :param template: Nombre del archivo .template a procesar.
-    """
     try:
         # Leer el contenido del archivo .template
-        with open(template, 'r') as f:
-            content = f.read()
+        with open(template, 'r') as file:
+            content = file.read()  # Cargamos todo el contenido del template en una variable
 
-        # Reemplazar los patrones {key} con los valores de settings.py
-        for key, value in vars(settings).items():
-            if not key.startswith("__"):  # Ignorar variables internas
-                content = content.replace(f'{{{key}}}', str(value))
+        # Reemplazar las variables con los valores definidos en settings.py
+        for key, value in vars(settings).items():  # Iterar sobre las variables del archivo settings.py
+            if not key.startswith("__"):  # Ignorar variables internas de Python (como __name__)
+                content = content.replace(f'{{{key}}}', str(value))  # Sustituir {key} por su valor
 
-        # Escribir el contenido procesado en el archivo .html
-        output_file = template.replace('.template', '.html')
-        with open(output_file, 'w') as output:
-            output.write(content)
-        print(f"Archivo procesado correctamente: {output_file}")
+        # Crear el archivo de salida con extensión .html
+        output_file = template.replace('.template', '.html')  # Cambiar la extensión a .html
+        with open(output_file, 'w') as file:
+            file.write(content)  # Guardar el contenido renderizado en el archivo de salida
+
+        print(f"Archivo generado correctamente: {output_file}")
+
     except Exception as e:
-        print(f"Error al procesar la plantilla: {e}")
-
-
-def valid_file(file):
-    """
-    Verifica si el archivo existe y tiene la extensión correcta.
-    :param file: Nombre del archivo a validar.
-    :return: True si es válido, False si no lo es.
-    """
-    if not file.endswith('.template'):
-        print(f"Error: {file} no tiene la extensión .template")
-        return False
-    if not os.path.isfile(file):
-        print(f"Error: El archivo {file} no existe")
-        return False
-    return True
-
-
-def valid_imput():
-    """
-    Valida los argumentos de entrada.
-    :return: True si los argumentos son válidos, False si no lo son.
-    """
-    if len(sys.argv) != 2:
-        print("Error: Número inválido de argumentos.")
-        print("Uso: python render.py <archivo>.template")
-        return False
-
-    file = sys.argv[1]
-    return valid_file(file)
+        # Capturar y mostrar cualquier error inesperado
+        print(f"Error procesando la plantilla: {e}")
 
 
 def main():
-    """
-    Punto de entrada del programa.
-    """
-    if not valid_imput():
+    # Validar que el usuario pase el archivo de plantilla como argumento
+    if len(sys.argv) != 2:
+        print("Uso: python render.py <archivo.template>")
         sys.exit(1)
 
-    try:
-        render(sys.argv[1])
-    except Exception as e:
-        print(f"Error inesperado: {e}")
+    template = sys.argv[1]  # Obtener el nombre del archivo pasado como argumento
+
+    # Comprobar si el archivo existe
+    if not os.path.isfile(template):
+        print(f"Error: el archivo {template} no existe.")
         sys.exit(1)
+
+    # Comprobar si el archivo tiene la extensión correcta
+    if not template.endswith('.template'):
+        print("Error: el archivo debe tener la extensión .template")
+        sys.exit(1)
+
+    # Procesar el archivo de plantilla
+    render(template)
 
 
 if __name__ == "__main__":
