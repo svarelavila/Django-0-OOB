@@ -165,7 +165,7 @@ def test():
     assert not invalid_page.is_valid(), "Test failed: Page with invalid hierarchy should be rejected."
     print("Passed: Hierarchy errors detected correctly.")
 
-    # 📄 Generación de archivos HTML (válido e inválido)
+    # Generación de archivos HTML (válido e inválido)
     print("\n" + "-" * 30)
     print("[GENERATING HTML FILES]")
     print("-" * 30)

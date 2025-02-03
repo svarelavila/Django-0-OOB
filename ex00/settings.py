@@ -10,4 +10,4 @@ skill3 = "Lógica Computacional"
 # Experiencia profesional
 carrer1 = "Colaboradora con Charles Babbage en la Máquina Analítica | 1833-1852"
 carrer2 = "Escritora del primer algoritmo para una máquina computacional | 1843"
-carrer3 = "Pionera en la concepción de máquinas universales | 1800s"
+carrer3 = "Pionera en la concepción de máquinas universales | 1500s"
