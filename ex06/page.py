@@ -102,7 +102,9 @@ class Page:
 
         for child in elem.content:
             if isinstance(child, Elem):
+                # print(f"  ├── Validating child <{child.tag}> of <{elem.tag}>...")
                 if not self._validate_tree(child):
+                    # print(f"Validation failed: Child <{child.tag}> of <{elem.tag}> is invalid")
                     return False
         return True
 
@@ -146,7 +148,7 @@ def test():
     Runs a minimal but complete set of tests to validate the Page class.
     """
     print("\n" + "=" * 50)
-    print("=== TESTING PAGE CLASS ===")
+    print("TESTING PAGE CLASS")
     print("=" * 50)
 
     # Caso 1: Página válida con estructura correcta
@@ -199,10 +201,6 @@ def test():
     valid_page.write_to_file("valid_page.html")
     invalid_page.write_to_file("invalid_page.html")
     print("HTML files generated successfully.")
-
-    # print("\n" + "=" * 50)
-    # print("========= ALL TESTS PASSED SUCCESSFULLY ==========")
-    # print("=" * 50)
 
 
 if __name__ == "__main__":

@@ -1,47 +1,58 @@
 import sys
 import os
-import settings  # Importamos las variables del archivo settings.py
+import settings
 
 
 def render(template):
+    """
+    Processes a template file (.template), replacing variables
+    defined in settings.py, and generates an HTML file with the
+    final content.
+    :param template: Name of the template file to process.
+    """
     try:
         # Leer el contenido del archivo .template
         with open(template, 'r') as file:
-            content = file.read()  # Cargamos todo el contenido del template en una variable
+            content = file.read()
 
         # Reemplazar las variables con los valores definidos en settings.py
-        for key, value in vars(settings).items():  # Iterar sobre las variables del archivo settings.py
-            if not key.startswith("__"):  # Ignorar variables internas de Python (como __name__)
-                content = content.replace(f'{{{key}}}', str(value))  # Sustituir {key} por su valor
+        for key, value in vars(settings).items():
+            if not key.startswith("__"):
+                content = content.replace(f'{{{key}}}', str(value))
 
         # Crear el archivo de salida con extensión .html
-        output_file = template.replace('.template', '.html')  # Cambiar la extensión a .html
+        output_file = template.replace('.template', '.html')
         with open(output_file, 'w') as file:
-            file.write(content)  # Guardar el contenido renderizado en el archivo de salida
+            file.write(content)
 
-        print(f"Archivo generado correctamente: {output_file}")
+        print(f"File successfully generated: {output_file}")
 
     except Exception as e:
         # Capturar y mostrar cualquier error inesperado
-        print(f"Error procesando la plantilla: {e}")
+        print(f"Error processing the template: {e}")
 
 
 def main():
+    """
+    Main script function.
+    Ensures a template file is passed as an argument,
+    validates its existence and extension, and calls the render() function.
+    """
     # Validar que el usuario pase el archivo de plantilla como argumento
     if len(sys.argv) != 2:
-        print("Uso: python render.py <archivo.template>")
+        print("Usage: python render.py <template_file>")
         sys.exit(1)
 
-    template = sys.argv[1]  # Obtener el nombre del archivo pasado como argumento
+    template = sys.argv[1]
 
     # Comprobar si el archivo existe
     if not os.path.isfile(template):
-        print(f"Error: el archivo {template} no existe.")
+        print(f"Error: The file {template} does not exist.")
         sys.exit(1)
 
     # Comprobar si el archivo tiene la extensión correcta
     if not template.endswith('.template'):
-        print("Error: el archivo debe tener la extensión .template")
+        print("Error: The file must have a .template extension")
         sys.exit(1)
 
     # Procesar el archivo de plantilla

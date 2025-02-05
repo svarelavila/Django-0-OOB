@@ -27,17 +27,17 @@ class Elem:
     def __init__(self, tag="div", attr=None, content=None, tag_type="double"):
         if attr is None:
             attr = {}
-        self.tag = tag # Nombre de la etiqueta HTML
-        self.attr = attr # Atribuos de la etiqueta HTML
-        self.tag_type = tag_type # Tipo de etiqueta: doble o simple
+        self.tag = tag  # Nombre de la etiqueta HTML
+        self.attr = attr  # Atribuos de la etiqueta HTML
+        self.tag_type = tag_type  # Tipo de etiqueta: doble o simple
 
         # Verifica que el tipo de etiqueta sea válido
         if tag_type not in ["double", "simple"]:
             raise Elem.ValidationError("Invalid tag type.")
 
-        self.content = [] # Inicializa la lista de contenido
+        self.content = []  # Inicializa la lista de contenido
         if content is not None:
-            self.add_content(content) # Agrega contenido si es proporcionado
+            self.add_content(content)  # Agrega contenido si es proporcionado
 
     def __str__(self):
         """
@@ -57,13 +57,12 @@ class Elem:
         """
         Generates the attribute string for the HTML element.
         """
-        result = "" # Inicializa una cadena vacía para almacenar los atributos
-        
+        result = ""  # Inicializa una cadena vacía para almacenar los atributos
         # itera sobre los atributos ordenados por clave
         for key, value in sorted(self.attr.items()):
             # Agrega el atributo en formato key="value" a la cadena resultante
             result += f' {key}="{value}"'
-        return result # Retorna la cadena con los atributos formateados
+        return result  # Retorna la cadena con los atributos formateados
 
     def __make_content(self):
         """
@@ -74,12 +73,11 @@ class Elem:
             return ""
         result = []
         for elem in self.content:
-            elem_str = str(elem).strip() # Convierte el contenido a string y elimina espacios en blanco.
-            if elem_str: # Verifica que el contenido no esté vacío.
+            elem_str = str(elem).strip()  # Convierte el contenido a string y elimina espacios en blanco.
+            if elem_str:  # Verifica que el contenido no esté vacío.
                 # Agrega indentación y reemplaza &quot; por comillas dobles.
                 indented_content = "  " + elem_str.replace("\n", "\n  ").replace("&quot;", '"')
                 result.append(indented_content)
-        
         # Retorna el contenido formateado con saltos de línea antes y después.
         return "\n" + "\n".join(result) + "\n"
 
@@ -90,23 +88,20 @@ class Elem:
         # Verifica si el contenido es válido según la función estática check_type().
         if not Elem.check_type(content):
             raise Elem.ValidationError("Invalid content.")  # Lanza una excepción si el contenido no es válido.
-        
         # Si el contenido es una lista, se procesa cada elemento individualmente.
         if isinstance(content, list):
             for item in content:
                 if not Elem.check_type(item):
                     raise Elem.ValidationError("Invalid content in list.")
-                if isinstance(item, Text) and not str(item).strip(): # Ignora cadenas vacías.
+                if isinstance(item, Text) and not str(item).strip():  # Ignora cadenas vacías.
                     continue
                 self.content.append(item)
-        
         # Si el contenido es una instancia de Text y está vacío, se ignora.
         elif isinstance(content, Text) and not str(content).strip():
             return
-        
         # Si el contenido no es una lista, ni un texto vacío, se agrega directamente.
         else:
-            self.content.append(content) # Agrega el elemento válido a la lista de contenido.
+            self.content.append(content)  # Agrega elto válido a lista contenido.
 
     @staticmethod
     def check_type(content):
@@ -118,8 +113,6 @@ class Elem:
             isinstance(content, list) and all(isinstance(item, (Elem, Text)) for item in content)
         )
 
-
-# Function to generate an HTML structure for testing
 
 def generate_html():
     """
@@ -135,7 +128,7 @@ def generate_html():
         ])
     ])
     print(html)
-    
+
 
 if __name__ == "__main__":
     generate_html()
