@@ -14,3 +14,8 @@ Este repositorio contiene ejercicos de entrenamiento **"OOB" Out of Bounds** cen
 | **ex05** | Ampliar `Elem` con clases específicas para etiquetas HTML (`html`, `body`, `p`, `div`, etc.). |
 | **ex06** | Crear `Page`, que valida la estructura de documentos HTML y permite escribirlos a archivos. |
 
+### 🏆 Evaluación
+
+<p align="left">
+  <img src="https://github.com/svarelavila/svarelavila/blob/main/imagenes/ok_100.png" alt="logo" width="125"/>
+</p>
