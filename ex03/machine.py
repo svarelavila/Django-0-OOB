@@ -36,7 +36,7 @@ class CoffeeMachine:
         self.served_count = 0  # Contador de bebidas servidas
         self.is_broken = False  # Estado de la máquina
 
-    def serve(self, beverage_cls):
+    def serve(self, beverage):
         """
         Serves a randomly selected beverage or an empty cup.
         :param beverage_cls: Beverage class derived from HotBeverage.
@@ -58,7 +58,7 @@ class CoffeeMachine:
         if random.randint(0, 1) == 0:  # 50% de probabilidad
             return CoffeeMachine.EmptyCup()
 
-        return beverage_cls()  # Devuelve la bebida solicitada
+        return beverage()  # Devuelve la bebida solicitada
 
     def repair(self):
         """
