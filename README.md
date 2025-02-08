@@ -1,6 +1,6 @@
 # 📌 Training Python-Django - 0 OOB
 
-Este repositorio contiene ejercicos de entrenamiento **"OOB" Out of Bounds** centrado en Python y Django con un enfocado en **Programación Orientada a Objetos (POO)**. Su objetivo es desarrollar habilidades prácticas mediante ejercicios progresivos, desde la creación de un **currículum vitae** hasta la validación de **estructuras HTML**.
+Este repositorio contiene ejercicos de entrenamiento **"OOB" Out of Bounds** centrado en Python y Django con un enfoque en **Programación Orientada a Objetos (POO)**. Su objetivo es desarrollar habilidades prácticas mediante ejercicios progresivos, desde la creación de un **currículum vitae** hasta la validación de **estructuras HTML**.
 
 ### 🧩 Resumen de Ejercicios
 
